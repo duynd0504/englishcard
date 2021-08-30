@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecomerience_21/models/englishtoday.dart';
 import 'package:flutter_ecomerience_21/packages/quote/quote.dart';
 import 'package:flutter_ecomerience_21/packages/quote/quote_model.dart';
+import 'package:flutter_ecomerience_21/pages/control_page.dart';
 import 'package:flutter_ecomerience_21/values/app_asserts.dart';
 import 'package:flutter_ecomerience_21/values/app_colors.dart';
 import 'package:flutter_ecomerience_21/values/app_fonts.dart';
 import 'package:flutter_ecomerience_21/values/app_styles.dart';
+import 'package:flutter_ecomerience_21/widgets/app_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -62,6 +64,7 @@ class _HomePageState extends State<HomePage> {
     return EnglishToday(noun: noun, quote: quote?.content, id: quote?.id);
   }
 
+  final GlobalKey<ScaffoldState> _scafolKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _pageController = PageController(viewportFraction: 0.9);
@@ -73,6 +76,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scafolKey,
       backgroundColor: AppColors.secondColor,
       appBar: AppBar(
         backgroundColor: AppColors.secondColor,
@@ -86,7 +90,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         leading: InkWell(
-          onTap: () {},
+          onTap: () {
+            _scafolKey.currentState?.openDrawer();
+          },
           child: Image.asset(AppAssets.menu),
         ),
       ),
@@ -197,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                                 '"$quote"',
                                 style: AppStyles.h4.copyWith(
                                   letterSpacing: 1,
-                                  fontSize: 30.0,
+                                  fontSize: 25.0,
                                   color: AppColors.textColor,
                                 ),
                               ),
@@ -239,6 +245,40 @@ class _HomePageState extends State<HomePage> {
             });
           },
           child: Container(child: Image.asset(AppAssets.exchange))),
+      drawer: Drawer(
+        child: Container(
+          color: AppColors.lightBlue,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 24, left: 16),
+                child: Text(
+                  'Your mind',
+                  style: AppStyles.h3.copyWith(color: AppColors.textColor),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: AppButton(
+                    lable: 'Favorites',
+                    onTap: () {
+                      print('favorites');
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: AppButton(
+                    lable: 'Your Control',
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => ControlPage()));
+                    }),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
