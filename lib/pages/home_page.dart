@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecomerience_21/models/englishtoday.dart';
 import 'package:flutter_ecomerience_21/packages/quote/quote.dart';
 import 'package:flutter_ecomerience_21/packages/quote/quote_model.dart';
+import 'package:flutter_ecomerience_21/pages/all_words_page.dart';
 import 'package:flutter_ecomerience_21/pages/control_page.dart';
 import 'package:flutter_ecomerience_21/values/app_asserts.dart';
 import 'package:flutter_ecomerience_21/values/app_colors.dart';
@@ -224,7 +225,7 @@ class _HomePageState extends State<HomePage> {
             ),
             //indicator
             _currentIndex >= 5
-                ? buildShowMore()
+                ? buildShowMore(context)
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: SizedBox(
@@ -294,7 +295,9 @@ class _HomePageState extends State<HomePage> {
 }
 
 Widget buildIndicator(bool isActive, Size size) {
-  return Container(
+  return AnimatedContainer(
+    duration: Duration(microseconds: 300),
+    curve: Curves.bounceInOut,
     height: 11,
     margin: const EdgeInsets.symmetric(horizontal: 12),
     width: isActive ? size.width * 1 / 5 : 35,
@@ -307,31 +310,32 @@ Widget buildIndicator(bool isActive, Size size) {
   );
 }
 
-Widget buildShowMore() {
-  return InkWell(
-    onTap: () {},
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      alignment: Alignment.centerLeft,
-      child: TextButton(
-        onPressed: () {},
+Widget buildShowMore(BuildContext context) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+    alignment: Alignment.centerLeft,
+    child: Material(
+      borderRadius: BorderRadius.all(Radius.circular(24)),
+      elevation: 4,
+      color: AppColors.primaryColor,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => AllWordPage(
+                      words: [],
+                    )),
+          );
+        },
+        splashColor: Colors.black38,
+        borderRadius: BorderRadius.all(Radius.circular(24)),
         child: Container(
-          decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black38,
-                  offset: Offset(2, 3),
-                  blurRadius: 3,
-                )
-              ],
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.all(Radius.circular(24))),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          child: Text(
-            'Show more',
-            style: AppStyles.h5.copyWith(color: AppColors.textColor),
-          ),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Text(
+              'Show more',
+              style: AppStyles.h5,
+            )),
       ),
     ),
   );
