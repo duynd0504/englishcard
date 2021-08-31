@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerience_21/models/englishtoday.dart';
@@ -10,7 +11,9 @@ import 'package:flutter_ecomerience_21/values/app_asserts.dart';
 import 'package:flutter_ecomerience_21/values/app_colors.dart';
 import 'package:flutter_ecomerience_21/values/app_fonts.dart';
 import 'package:flutter_ecomerience_21/values/app_styles.dart';
+import 'package:flutter_ecomerience_21/values/shared_key.dart';
 import 'package:flutter_ecomerience_21/widgets/app_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -48,15 +51,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   //lay danh sach
-  getEnglishToday() {
-    List<String> newList = [];
-    List<int> rans = fixedListRandom(len: 5, max: nouns.length);
-    rans.forEach((index) {
-      newList.add(nouns[index]);
-    });
-
-    words = newList.map((e) => getQuotes(e)).toList();
-  }
 
   EnglishToday getQuotes(String noun) {
     Quote? quote;
@@ -68,8 +62,21 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _pageController = PageController(viewportFraction: 0.9);
-    getEnglishToday();
     super.initState();
+    getEnglishToday();
+  }
+
+  getEnglishToday() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int len = prefs.getInt(SharedKey.counterControl) ?? 5;
+    List<String> newList = [];
+    List<int> rans = fixedListRandom(len: len, max: nouns.length);
+    rans.forEach((index) {
+      newList.add(nouns[index]);
+    });
+    setState(() {
+      words = newList.map((e) => getQuotes(e)).toList();
+    });
   }
 
   @override
@@ -199,11 +206,12 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 30.0),
-                              child: Text(
+                              child: AutoSizeText(
                                 '"$quote"',
+                                maxFontSize: 25,
+                                minFontSize: 12,
                                 style: AppStyles.h4.copyWith(
                                   letterSpacing: 1,
-                                  fontSize: 25.0,
                                   color: AppColors.textColor,
                                 ),
                               ),
@@ -215,24 +223,26 @@ class _HomePageState extends State<HomePage> {
                   }),
             ),
             //indicator
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SizedBox(
-                height: size.height * 1 / 12,
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return buildIndicator(index == _currentIndex, size);
-                      }),
-                ),
-              ),
-            ),
+            _currentIndex >= 5
+                ? buildShowMore()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: SizedBox(
+                      height: size.height * 1 / 12,
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              return buildIndicator(
+                                  index == _currentIndex, size);
+                            }),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -294,5 +304,35 @@ Widget buildIndicator(bool isActive, Size size) {
         boxShadow: [
           BoxShadow(color: Colors.black38, offset: Offset(2, 3), blurRadius: 3)
         ]),
+  );
+}
+
+Widget buildShowMore() {
+  return InkWell(
+    onTap: () {},
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      alignment: Alignment.centerLeft,
+      child: TextButton(
+        onPressed: () {},
+        child: Container(
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black38,
+                  offset: Offset(2, 3),
+                  blurRadius: 3,
+                )
+              ],
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.all(Radius.circular(24))),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          child: Text(
+            'Show more',
+            style: AppStyles.h5.copyWith(color: AppColors.textColor),
+          ),
+        ),
+      ),
+    ),
   );
 }

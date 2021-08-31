@@ -29,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   english_words: ^4.0.0
   shared_preferences: ^2.0.7
+  auto_size_text: ^3.0.0-nullsafety.0
 
 dev_dependencies:
   flutter_test:

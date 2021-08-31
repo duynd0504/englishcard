@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecomerience_21/values/app_asserts.dart';
 import 'package:flutter_ecomerience_21/values/app_colors.dart';
 import 'package:flutter_ecomerience_21/values/app_styles.dart';
+import 'package:flutter_ecomerience_21/values/shared_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ControlPage extends StatefulWidget {
@@ -13,6 +14,21 @@ class ControlPage extends StatefulWidget {
 
 class _ControlPageState extends State<ControlPage> {
   double slideValue = 5;
+  late SharedPreferences prefs;
+  @override
+  void initState() {
+    super.initState();
+    initDefaultValue();
+  }
+
+  initDefaultValue() async {
+    prefs = await SharedPreferences.getInstance();
+    int value = prefs.getInt(SharedKey.counterControl) ?? 5;
+    setState(() {
+      slideValue = value.toDouble();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +50,7 @@ class _ControlPageState extends State<ControlPage> {
         leading: InkWell(
           onTap: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setInt(SharedKey.counterControl, slideValue.toInt());
             Navigator.pop(context);
           },
           child: Image.asset(AppAssets.leftArrow),
