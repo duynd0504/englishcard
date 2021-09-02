@@ -338,6 +338,10 @@ class _HomePageState extends State<HomePage> {
                     lable: 'Favorites',
                     onTap: () {
                       print('favorites');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => AllWords(words: words)));
                     }),
               ),
               Padding(
