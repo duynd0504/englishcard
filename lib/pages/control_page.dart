@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerience_21/pages/home_page.dart';
 import 'package:flutter_ecomerience_21/values/app_asserts.dart';
 import 'package:flutter_ecomerience_21/values/app_colors.dart';
 import 'package:flutter_ecomerience_21/values/app_styles.dart';
@@ -52,6 +53,9 @@ class _ControlPageState extends State<ControlPage> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.setInt(SharedKey.counterControl, slideValue.toInt());
             Navigator.pop(context);
+            setState(() {
+              HomePage();
+            });
           },
           child: Image.asset(AppAssets.leftArrow),
         ),
